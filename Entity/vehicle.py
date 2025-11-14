@@ -84,19 +84,6 @@ class Vehicle:
 
 
 
-        # right vector
-        d_x = (self.bottomRight[0] - obstacle.relX) - (self.topRight[0] - obstacle.relX)
-        d_y = (self.bottomRight[1] - obstacle.relY) - (self.topRight[1] - obstacle.relY)
-
-        d_r = sqrt((d_x * d_x) + (d_y * d_y))
-        D = ((self.topRight[0] - obstacle.relX) * (self.bottomRight[1] - obstacle.relY)) - ((self.bottomRight[0] - obstacle.relX) * (self.topRight[1] - obstacle.relY))
-        discriminant = (r * r) * (d_r * d_r) - (D * D)
-
-        if discriminant > 0:
-            collidesVertical = True
-
-
-
         # bottom vector
         d_x = (self.bottomLeft[0] - obstacle.relX) - (self.bottomRight[0] - obstacle.relX)
         d_y = (self.bottomLeft[1] - obstacle.relY) - (self.bottomRight[1] - obstacle.relY)
@@ -107,6 +94,25 @@ class Vehicle:
 
         if discriminant > 0:
             collidesHorizontal = True
+
+
+
+        # can break out of the function early here, since if there is no horizontal collision then the function will return false anyways
+        if not collidesHorizontal:
+            return False
+
+
+
+        # right vector
+        d_x = (self.bottomRight[0] - obstacle.relX) - (self.topRight[0] - obstacle.relX)
+        d_y = (self.bottomRight[1] - obstacle.relY) - (self.topRight[1] - obstacle.relY)
+
+        d_r = sqrt((d_x * d_x) + (d_y * d_y))
+        D = ((self.topRight[0] - obstacle.relX) * (self.bottomRight[1] - obstacle.relY)) - ((self.bottomRight[0] - obstacle.relX) * (self.topRight[1] - obstacle.relY))
+        discriminant = (r * r) * (d_r * d_r) - (D * D)
+
+        if discriminant > 0:
+            collidesVertical = True
 
 
 

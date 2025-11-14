@@ -5,13 +5,15 @@ def main():
     import pygame
     import time
 
-    import Entity.vehicle
-    import Entity.obstacle
+    import singleSimulation
 
     pygame.init()
+    pygame.font.init()
 
-    car = Entity.vehicle.Vehicle()
-    obstacle = Entity.obstacle.Obstacle(-200, -200)
+    mainFont = pygame.font.SysFont("SF Mono", 24)
+
+    sim = singleSimulation.SingleSimulation(10, 800, 500)
+
     drawSurface = pygame.display.set_mode((800, 800))
 
     while 1:
@@ -19,29 +21,36 @@ def main():
             if event.type == pygame.QUIT:
                 quit()
 
+        # this is the beginning of the simulation things
+        turning = 0.0
+
         if pygame.key.get_pressed()[pygame.K_a]:
-            car.direction -= 0.1
+            turning = -1.0
+        elif pygame.key.get_pressed()[pygame.K_d]:
+            turning = 1.0
 
-        if pygame.key.get_pressed()[pygame.K_d]:
-            car.direction += 0.1
+        sim.tick(turning, 1.0 if pygame.key.get_pressed()[pygame.K_w] else 0.0)
+        # this is the end of the simulation things, the rest is rendering
 
-        if pygame.key.get_pressed()[pygame.K_w]:
-            obstacle.move(10, car.direction)
+        # even then most of it is determining turning direction from user input, this would be similar for getting the output from artificiall intelligence
 
-        car.rotatePoints()
-        car.makeScreenSpacePoints(800, 800)
-        obstacle.makeScreenSpacePoints(800, 800)
+        sim.car.makeScreenSpacePoints(800, 800)
 
         drawSurface.fill((0, 0, 0))
 
-        pygame.draw.circle(drawSurface, (255, 0, 255), car.screenSpaceTopLeft,     3)
-        pygame.draw.circle(drawSurface, (255, 255, 0), car.screenSpaceTopRight,    3)
-        pygame.draw.circle(drawSurface, (255, 255, 255), car.screenSpaceBottomLeft,  3)
-        pygame.draw.circle(drawSurface, (255, 255, 255), car.screenSpaceBottomRight, 3)
+        pygame.draw.circle(drawSurface, (255, 0, 255),   sim.car.screenSpaceTopLeft,     3)
+        pygame.draw.circle(drawSurface, (255, 255, 0),   sim.car.screenSpaceTopRight,    3)
+        pygame.draw.circle(drawSurface, (0, 255, 255), sim.car.screenSpaceBottomLeft,    3)
+        pygame.draw.circle(drawSurface, (255, 255, 255), sim.car.screenSpaceBottomRight, 3)
 
-        colliding = car.collidedWith(obstacle)
+        drawSurface.blit(mainFont.render(str(sim.car.direction), True, (255, 255, 255)), (10, 10))
+        drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relX), True, (255, 255, 255)), (10, 40))
+        drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relY), True, (255, 255, 255)), (10, 70))
 
-        pygame.draw.circle(drawSurface, (255 if colliding else 0, 0 if colliding else 255, 0), (obstacle.screenSpaceX, obstacle.screenSpaceY), Entity.obstacle.Obstacle.radius())
+        for obstacle in sim.obstacleList:
+            obstacle.makeScreenSpacePoints(800, 800)
+            pygame.draw.circle(drawSurface, (255 if obstacle.collidingWithCar else 0, 0 if obstacle.collidingWithCar else 255, 0), (obstacle.screenSpaceX, obstacle.screenSpaceY), obstacle.radius())
+
 
         pygame.display.update()
 
