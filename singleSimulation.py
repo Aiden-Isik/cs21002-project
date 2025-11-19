@@ -1,7 +1,7 @@
 from Entity.obstacle import Obstacle
 from Entity.vehicle import Vehicle
 
-from math import pi
+from math import pi, cos
 
 class SingleSimulation:
     """
@@ -20,6 +20,7 @@ class SingleSimulation:
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
         self.car = Vehicle()
         self.sandboxSize = sandboxSize
+        self.fitness = 0.0
 
         self.crashed = False
 
@@ -29,7 +30,7 @@ class SingleSimulation:
 
     def tick(self, turning: float = 0.0, forward: float = 0.0) -> None:
         """
-        perform one tick of the simulation
+        perform one tick of the simulation, with inputs given to the tick for the car
         turning < -0.5 means turn left, turning > 0.5 means turn right
         forward > 0.5 means go forward
         """
@@ -71,6 +72,12 @@ class SingleSimulation:
                 # if it has then this simulation is done
                 self.crashed = True
                 obstacle.collidingWithCar = True
+
+        # go through every dot sensor and check to see if there are any being detected
+        for sensor in self.car.dotSensorList:
+            sensor.updateDetect(self.obstacleList)
+
+        self.fitness += (cos(self.car.direction) * self.car.speed)
 
     def run(self, maxTicks: int = 5_000_000):
         """
