@@ -43,14 +43,17 @@ def main():
         pygame.draw.circle(drawSurface, (0, 255, 255), sim.car.screenSpaceBottomLeft,    3)
         pygame.draw.circle(drawSurface, (255, 255, 255), sim.car.screenSpaceBottomRight, 3)
 
-        drawSurface.blit(mainFont.render(str(sim.car.direction), True, (255, 255, 255)), (10, 10))
+        drawSurface.blit(mainFont.render(str(sim.car.direction),        True, (255, 255, 255)), (10, 10))
         drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relX), True, (255, 255, 255)), (10, 40))
         drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relY), True, (255, 255, 255)), (10, 70))
+        drawSurface.blit(mainFont.render(str(sim.fitness),              True, (255, 255, 255)), (10, 100))
 
         for obstacle in sim.obstacleList:
             obstacle.makeScreenSpacePoints(800, 800)
             pygame.draw.circle(drawSurface, (255 if obstacle.collidingWithCar else 0, 0 if obstacle.collidingWithCar else 255, 0), (obstacle.screenSpaceX, obstacle.screenSpaceY), obstacle.radius())
 
+        for sensor in sim.car.dotSensorList:
+            pygame.draw.line(drawSurface, (0, 127 if sensor.detect == 0.0 else 255, 0), sim.car.screenSpaceCentre, ((sensor.farCorner[0] + sim.car.screenSpaceCentre[0]), (sensor.farCorner[1] + sim.car.screenSpaceCentre[1])))
 
         pygame.display.update()
 
