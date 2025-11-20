@@ -1,8 +1,11 @@
 import Entity.obstacle
+import Entity.dotSensor
 
-from math import cos, sin, sqrt
+from math import cos, sin, sqrt, radians
 
 class Vehicle:
+    # every value in this list is an offset from forwards that a detection ray will be spawned in
+    dotSensorAngleList = [-90, -70, -50, -30, -15, 0, 15, 30, 50, 70, 90]
     """
     A vehicle being controlled by something
     """
@@ -28,15 +31,26 @@ class Vehicle:
         self.screenSpaceTopRight:    tuple = (0.0, 0.0)
         self.screenSpaceBottomLeft:  tuple = (0.0, 0.0)
         self.screenSpaceBottomRight: tuple = (0.0, 0.0)
+        self.screenSpaceCentre:      tuple = (0.0, 0.0)
+
+        self.dotSensorList = []
+        for angle in Vehicle.dotSensorAngleList:
+            self.dotSensorList.append(Entity.dotSensor.DotSensor())
+            self.dotSensorList[-1].setOffset(radians(angle))
 
     def rotatePoints(self) -> None:
         """
         Calculate the position of the points on the rectangle representing the car, given the rotation that it currently has
+
+        also update the angle and positioning of any sensors attached to the car
         """
         self.topLeft     = (((self.topLeftDatum[0]     * cos(self.direction)) - (self.topLeftDatum[1]     * sin(self.direction))), ((self.topLeftDatum[0]     * sin(self.direction)) + (self.topLeftDatum[1]     * cos(self.direction))))
         self.topRight    = (((self.topRightDatum[0]    * cos(self.direction)) - (self.topRightDatum[1]    * sin(self.direction))), ((self.topRightDatum[0]    * sin(self.direction)) + (self.topRightDatum[1]    * cos(self.direction))))
         self.bottomLeft  = (((self.bottomLeftDatum[0]  * cos(self.direction)) - (self.bottomLeftDatum[1]  * sin(self.direction))), ((self.bottomLeftDatum[0]  * sin(self.direction)) + (self.bottomLeftDatum[1]  * cos(self.direction))))
         self.bottomRight = (((self.bottomRightDatum[0] * cos(self.direction)) - (self.bottomRightDatum[1] * sin(self.direction))), ((self.bottomRightDatum[0] * sin(self.direction)) + (self.bottomRightDatum[1] * cos(self.direction))))
+
+        for sensor in self.dotSensorList:
+            sensor.faceDirection(self.direction)
 
     def makeScreenSpacePoints(self, screen_X, screen_Y) -> None:
         """
@@ -46,6 +60,7 @@ class Vehicle:
         self.screenSpaceTopRight    = ((self.topRight[0]    + (screen_X / 2)), (self.topRight[1]    + (screen_Y / 2)))
         self.screenSpaceBottomLeft  = ((self.bottomLeft[0]  + (screen_X / 2)), (self.bottomLeft[1]  + (screen_Y / 2)))
         self.screenSpaceBottomRight = ((self.bottomRight[0] + (screen_X / 2)), (self.bottomRight[1] + (screen_Y / 2)))
+        self.screenSpaceCentre      = ((screen_X / 2),                         (screen_Y / 2))
 
     def collidedWith(self, obstacle: Entity.obstacle.Obstacle) -> bool:
         """
