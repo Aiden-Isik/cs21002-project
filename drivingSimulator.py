@@ -1,63 +1,107 @@
-def main():
+import pyglet
+import time
+import singleSimulation
+
+def simulation_view():
     """
-    this is a fairly basic GUI attached to the underlying simulation so that a visualisation can be made of whats happening
+    This is a fairly basic GUI attached to the underlying simulation so that a visualisation can be made of what's happening
     """
-    import pygame
-    import time
 
-    import singleSimulation
+    # Define font used
+    mainFont = "SF Mono"
+    mainFontSize = 24
 
-    pygame.init()
-    pygame.font.init()
+    # Set up the default movement information
+    moveLeft = 0.0
+    moveRight = 0.0
+    moveForwards = 0.0
 
-    mainFont = pygame.font.SysFont("SF Mono", 24)
+    # Start up the simulator
+    window = pyglet.window.Window(800, 800, "Test")
+    sim = singleSimulation.SingleSimulation(10, 800, 500) # TODO: Completely decouple the simulation from this
 
-    sim = singleSimulation.SingleSimulation(10, 800, 500)
+    # Flip the Y coordinate so things render the right way round.
+    # This isn't strictly necessary, and 0 being the bottom left is in my opinion superior,
+    # however this renderer replaces a Pygame-based renderer which has Y in the top left instead,
+    # and consistency is nice.
+    def flip_y_coord(y):
+        return window.get_size()[1] - y
 
-    drawSurface = pygame.display.set_mode((800, 800))
+    # On each frame, draw the scene
+    @window.event
+    def on_draw():
+        sim.tick(moveRight - moveLeft, moveForwards)
 
-    while 1:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                quit()
+        # Even though this array is not read, all objects to be drawn must be added or they won't render.
+        # Presumably, that is the garbage collector's doing.
+        objects = []
 
-        # this is the beginning of the simulation things
-        turning = 0.0
+        # Batch all of the draws together so Pyglet can optimise the OpenGL
+        drawBatch = pyglet.graphics.Batch()
 
-        if pygame.key.get_pressed()[pygame.K_a]:
-            turning = -1.0
-        elif pygame.key.get_pressed()[pygame.K_d]:
-            turning = 1.0
-
-        sim.tick(turning, 1.0 if pygame.key.get_pressed()[pygame.K_w] else 0.0)
-        # this is the end of the simulation things, the rest is rendering
-
-        # even then most of it is determining turning direction from user input, this would be similar for getting the output from artificiall intelligence
-
+        # Car corners
         sim.car.makeScreenSpacePoints(800, 800)
 
-        drawSurface.fill((0, 0, 0))
+        objects.append(pyglet.shapes.Circle(sim.car.screenSpaceTopLeft[0], flip_y_coord(sim.car.screenSpaceTopLeft[1]), 3, color=(255, 0, 255), batch=drawBatch))
+        objects.append(pyglet.shapes.Circle(sim.car.screenSpaceTopRight[0], flip_y_coord(sim.car.screenSpaceTopRight[1]), 3, color=(255, 255, 0), batch=drawBatch))
+        objects.append(pyglet.shapes.Circle(sim.car.screenSpaceBottomLeft[0], flip_y_coord(sim.car.screenSpaceBottomLeft[1]), 3, color=(0, 255, 255), batch=drawBatch))
+        objects.append(pyglet.shapes.Circle(sim.car.screenSpaceBottomRight[0], flip_y_coord(sim.car.screenSpaceBottomRight[1]), 3, color=(255, 255, 255), batch=drawBatch))
 
-        pygame.draw.circle(drawSurface, (255, 0, 255),   sim.car.screenSpaceTopLeft,     3)
-        pygame.draw.circle(drawSurface, (255, 255, 0),   sim.car.screenSpaceTopRight,    3)
-        pygame.draw.circle(drawSurface, (0, 255, 255), sim.car.screenSpaceBottomLeft,    3)
-        pygame.draw.circle(drawSurface, (255, 255, 255), sim.car.screenSpaceBottomRight, 3)
+        # Debug info
+        objects.append(pyglet.text.Label(str(sim.car.direction), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(10), anchor_x="left", anchor_y="top", batch=drawBatch))
+        objects.append(pyglet.text.Label(str(sim.obstacleList[0].relX), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(40), anchor_x="left", anchor_y="top", batch=drawBatch))
+        objects.append(pyglet.text.Label(str(sim.obstacleList[0].relY), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(70), anchor_x="left", anchor_y="top", batch=drawBatch))
 
-        drawSurface.blit(mainFont.render(str(sim.car.direction),        True, (255, 255, 255)), (10, 10))
-        drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relX), True, (255, 255, 255)), (10, 40))
-        drawSurface.blit(mainFont.render(str(sim.obstacleList[0].relY), True, (255, 255, 255)), (10, 70))
-        drawSurface.blit(mainFont.render(str(sim.fitness),              True, (255, 255, 255)), (10, 100))
-
+        # Obstacles
         for obstacle in sim.obstacleList:
             obstacle.makeScreenSpacePoints(800, 800)
-            pygame.draw.circle(drawSurface, (255 if obstacle.collidingWithCar else 0, 0 if obstacle.collidingWithCar else 255, 0), (obstacle.screenSpaceX, obstacle.screenSpaceY), obstacle.radius())
+            objects.append(pyglet.shapes.Circle(obstacle.screenSpaceX,
+                                                flip_y_coord(obstacle.screenSpaceY),
+                                                obstacle.radius(),
+                                                color=(255 if obstacle.collidingWithCar else 0,
+                                                       0 if obstacle.collidingWithCar else 255,
+                                                       0),
+                                                batch=drawBatch))
 
-        for sensor in sim.car.dotSensorList:
-            pygame.draw.line(drawSurface, (0, 127 if sensor.detect == 0.0 else 255, 0), sim.car.screenSpaceCentre, ((sensor.farCorner[0] + sim.car.screenSpaceCentre[0]), (sensor.farCorner[1] + sim.car.screenSpaceCentre[1])))
+        # Draw the scene
+        window.clear()
+        drawBatch.draw()
 
-        pygame.display.update()
+    # Handle keypresses
+    # TODO: Decouple input from the renderer
+    @window.event
+    def on_key_press(symbol, modifiers):
+        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
+        nonlocal moveLeft
+        nonlocal moveRight
+        nonlocal moveForwards
 
-        time.sleep(0.1)
+        if(symbol == pyglet.window.key.A):
+            moveLeft = 1.0
+
+        elif(symbol == pyglet.window.key.D):
+            moveRight = 1.0
+
+        elif(symbol == pyglet.window.key.W):
+            moveForwards = 1.0
+
+    @window.event
+    def on_key_release(symbol, modifiers):
+        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
+        nonlocal moveLeft
+        nonlocal moveRight
+        nonlocal moveForwards
+
+        if(symbol == pyglet.window.key.A):
+            moveLeft = 0.0
+
+        elif(symbol == pyglet.window.key.D):
+            moveRight = 0.0
+
+        elif(symbol == pyglet.window.key.W):
+            moveForwards = 0.0
+
 
 if __name__ == "__main__":
-    main()
+    simulation_view()
+    pyglet.app.run()

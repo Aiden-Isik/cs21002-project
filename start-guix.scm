@@ -20,6 +20,6 @@
  "--share=/tmp/.X11-unix/"
  (string-append "--expose=/run/user/" (number->string (getuid)))
  ;; Install python, pygame, and bash to the shell
- "python" "python-pygame" "bash-minimal"
+ "python" "python-pyglet" "bash-minimal"
  ;; Run the python interpreter after passing environment variables
  "--" "sh" "-c" (string-append env-vars "python3 ./drivingSimulator.py"))
