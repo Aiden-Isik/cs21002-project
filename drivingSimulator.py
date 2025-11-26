@@ -8,12 +8,8 @@ def simulation_view():
     """
 
     # Define font used
-    mainFont = "mono"
-    try:
-        mainFont = "SF Mono"
-    except AssertionError:
-        pass
-
+    pyglet.font.add_file("ComicShannsMono-Regular.ttf")
+    mainFont = "Comic Shanns Mono"
     mainFontSize = 24
 
     # Set up the default movement information
