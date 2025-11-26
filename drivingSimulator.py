@@ -8,7 +8,8 @@ def simulation_view():
     """
 
     # Define font used
-    mainFont = "SF Mono"
+    pyglet.font.add_file("ComicShannsMono-Regular.ttf")
+    mainFont = "Comic Shanns Mono"
     mainFontSize = 24
 
     # Set up the default movement information
