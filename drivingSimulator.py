@@ -8,7 +8,12 @@ def simulation_view():
     """
 
     # Define font used
-    mainFont = "SF Mono"
+    mainFont = "mono"
+    try:
+        mainFont = "SF Mono"
+    except AssertionError:
+        pass
+
     mainFontSize = 24
 
     # Set up the default movement information
