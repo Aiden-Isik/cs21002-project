@@ -1,5 +1,5 @@
-from Entity.obstacle import Obstacle
-from Entity.vehicle import Vehicle
+from entity.obstacle import Obstacle
+from entity.vehicle import Vehicle
 
 from math import pi, cos
 

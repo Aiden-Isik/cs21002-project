@@ -22,4 +22,4 @@
  ;; Install python, pygame, and bash to the shell
  "python" "python-pyglet" "bash-minimal"
  ;; Run the python interpreter after passing environment variables
- "--" "sh" "-c" (string-append env-vars "python3 ./drivingSimulator.py"))
+ "--" "sh" "-c" (string-append env-vars "python3 ./src/main.py"))

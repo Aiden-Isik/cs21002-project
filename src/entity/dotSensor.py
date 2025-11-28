@@ -1,4 +1,4 @@
-import Entity.obstacle
+import entity.obstacle
 
 from math import cos, sin, sqrt
 
@@ -36,7 +36,7 @@ class DotSensor:
         """
         self.offsetAngle = offsetAngle
 
-    def updateDetect(self, obstacleList: list[Entity.obstacle.Obstacle]):
+    def updateDetect(self, obstacleList: list[entity.obstacle.Obstacle]):
         """
         goes through every obstacle in the list and finds the nearest one that will be detected, then updates self.detect with respect to it
         """

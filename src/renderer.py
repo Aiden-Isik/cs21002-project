@@ -1,14 +1,13 @@
 import pyglet
 import time
-import singleSimulation
 
-def simulation_view():
+def render(sim):
     """
-    This is a fairly basic GUI attached to the underlying simulation so that a visualisation can be made of what's happening
+    Render the given simulation 'sim'
     """
 
     # Define font used
-    pyglet.font.add_file("ComicShannsMono-Regular.ttf")
+    pyglet.font.add_file("assets/ComicShannsMono-Regular.ttf")
     mainFont = "Comic Shanns Mono"
     mainFontSize = 24
 
@@ -18,8 +17,7 @@ def simulation_view():
     moveForwards = 0.0
 
     # Start up the simulator
-    window = pyglet.window.Window(800, 800, "Test")
-    sim = singleSimulation.SingleSimulation(10, 800, 500) # TODO: Completely decouple the simulation from this
+    window = pyglet.window.Window(800, 800, "PLACEHOLDER-NAME - Renderer")
 
     # Flip the Y coordinate so things render the right way round.
     # This isn't strictly necessary, and 0 being the bottom left is in my opinion superior,
@@ -101,8 +99,3 @@ def simulation_view():
 
         elif(symbol == pyglet.window.key.W):
             moveForwards = 0.0
-
-
-if __name__ == "__main__":
-    simulation_view()
-    pyglet.app.run()
