@@ -7,14 +7,9 @@ def render(sim):
     """
 
     # Define font used
-    pyglet.font.add_file("assets/ComicShannsMono-Regular.ttf")
+    pyglet.resource.add_font("assets/ComicShannsMono-Regular.ttf")
     mainFont = "Comic Shanns Mono"
     mainFontSize = 24
-
-    # Set up the default movement information
-    moveLeft = 0.0
-    moveRight = 0.0
-    moveForwards = 0.0
 
     # Start up the simulator
     window = pyglet.window.Window(800, 800, "PLACEHOLDER-NAME - Renderer")
@@ -29,8 +24,6 @@ def render(sim):
     # On each frame, draw the scene
     @window.event
     def on_draw():
-        sim.tick(moveRight - moveLeft, moveForwards)
-
         # Even though this array is not read, all objects to be drawn must be added or they won't render.
         # Presumably, that is the garbage collector's doing.
         objects = []
@@ -70,32 +63,34 @@ def render(sim):
     # TODO: Decouple input from the renderer
     @window.event
     def on_key_press(symbol, modifiers):
-        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
-        nonlocal moveLeft
-        nonlocal moveRight
-        nonlocal moveForwards
-
         if(symbol == pyglet.window.key.A):
-            moveLeft = 1.0
+            sim.movement.mutex.acquire()
+            sim.movement.left = 1.0
+            sim.movement.mutex.release()
 
         elif(symbol == pyglet.window.key.D):
-            moveRight = 1.0
+            sim.movement.mutex.acquire()
+            sim.movement.right = 1.0
+            sim.movement.mutex.release()
 
         elif(symbol == pyglet.window.key.W):
-            moveForwards = 1.0
+            sim.movement.mutex.acquire()
+            sim.movement.forwards = 1.0
+            sim.movement.mutex.release()
 
     @window.event
     def on_key_release(symbol, modifiers):
-        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
-        nonlocal moveLeft
-        nonlocal moveRight
-        nonlocal moveForwards
-
         if(symbol == pyglet.window.key.A):
-            moveLeft = 0.0
+            sim.movement.mutex.acquire()
+            sim.movement.left = 0.0
+            sim.movement.mutex.release()
 
         elif(symbol == pyglet.window.key.D):
-            moveRight = 0.0
+            sim.movement.mutex.acquire()
+            sim.movement.right = 0.0
+            sim.movement.mutex.release()
 
         elif(symbol == pyglet.window.key.W):
-            moveForwards = 0.0
+            sim.movement.mutex.acquire()
+            sim.movement.forwards = 0.0
+            sim.movement.mutex.release()

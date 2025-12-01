@@ -1,6 +1,8 @@
 from entity.obstacle import Obstacle
 from entity.vehicle import Vehicle
 
+import threading
+from dataclasses import dataclass
 from math import pi, cos
 
 class SingleSimulation:
@@ -16,6 +18,15 @@ class SingleSimulation:
     # px per tick
     CarSpeed = 10
 
+    # Movement information
+    # These are set by the agent (or player) controlling the car in a separate thread
+    @dataclass
+    class Movement:
+        mutex = threading.Lock()
+        left: float = 0.0
+        right: float = 0.0
+        forwards: float = 0.0
+
 
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
         self.car = Vehicle()
@@ -28,9 +39,11 @@ class SingleSimulation:
         for _ in range(numberOfObstacles):
             self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
 
+        self.movement = self.Movement()
+
     def tick(self, turning: float = 0.0, forward: float = 0.0) -> None:
         """
-        perform one tick of the simulation, with inputs given to the tick for the car
+        Perform one tick of the simulation, with inputs given to the tick for the car
         turning < -0.5 means turn left, turning > 0.5 means turn right
         forward > 0.5 means go forward
         """
@@ -81,9 +94,19 @@ class SingleSimulation:
 
     def run(self, maxTicks: int = 5_000_000):
         """
-        run an entire simulation either until the car crashes or until it hits a tick limit
+        Run an entire simulation either until the car crashes or until it hits a tick limit
         """
+
+        self.tick(0.0, 0.0)
+
         for i in range(maxTicks):
-            self.tick()
+            self.movement.mutex.acquire()
+
+            # If the car is currently moving, tick the simulation
+            if(self.movement.left or self.movement.right or self.movement.forwards):
+               self.tick(self.movement.right - self.movement.left, self.movement.forwards)
+
+            self.movement.mutex.release()
+
             if self.crashed:
-                break
+                return
