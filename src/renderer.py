@@ -1,14 +1,13 @@
 import pyglet
 import time
-import singleSimulation
 
-def simulation_view():
+def render(sim):
     """
-    This is a fairly basic GUI attached to the underlying simulation so that a visualisation can be made of what's happening
+    Render the given simulation 'sim'
     """
 
     # Define font used
-    pyglet.font.add_file("ComicShannsMono-Regular.ttf")
+    pyglet.resource.add_font("assets/ComicShannsMono-Regular.ttf")
     mainFont = "Comic Shanns Mono"
     mainFontSize = 24
 
@@ -17,9 +16,8 @@ def simulation_view():
     moveRight = 0.0
     moveForwards = 0.0
 
-    # Start up the simulator
-    window = pyglet.window.Window(800, 800, "Test")
-    sim = singleSimulation.SingleSimulation(10, 800, 500) # TODO: Completely decouple the simulation from this
+    # Start up the window
+    window = pyglet.window.Window(800, 800, "Car Navigation - Renderer")
 
     # Flip the Y coordinate so things render the right way round.
     # This isn't strictly necessary, and 0 being the bottom left is in my opinion superior,
@@ -31,7 +29,7 @@ def simulation_view():
     # On each frame, draw the scene
     @window.event
     def on_draw():
-        sim.tick(moveRight - moveLeft, moveForwards)
+        sim.tick(moveRight - moveLeft, moveForwards) # TODO: decouple from simulation
 
         # Even though this array is not read, all objects to be drawn must be added or they won't render.
         # Presumably, that is the garbage collector's doing.
@@ -101,8 +99,3 @@ def simulation_view():
 
         elif(symbol == pyglet.window.key.W):
             moveForwards = 0.0
-
-
-if __name__ == "__main__":
-    simulation_view()
-    pyglet.app.run()

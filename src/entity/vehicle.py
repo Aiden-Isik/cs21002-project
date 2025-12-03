@@ -1,5 +1,5 @@
-import Entity.obstacle
-import Entity.dotSensor
+import entity.obstacle
+import entity.dotSensor
 
 from math import cos, sin, sqrt, radians
 
@@ -35,7 +35,7 @@ class Vehicle:
 
         self.dotSensorList = []
         for angle in Vehicle.dotSensorAngleList:
-            self.dotSensorList.append(Entity.dotSensor.DotSensor())
+            self.dotSensorList.append(entity.dotSensor.DotSensor())
             self.dotSensorList[-1].setOffset(radians(angle))
 
     def rotatePoints(self) -> None:
@@ -62,7 +62,7 @@ class Vehicle:
         self.screenSpaceBottomRight = ((self.bottomRight[0] + (screen_X / 2)), (self.bottomRight[1] + (screen_Y / 2)))
         self.screenSpaceCentre      = ((screen_X / 2),                         (screen_Y / 2))
 
-    def collidedWith(self, obstacle: Entity.obstacle.Obstacle) -> bool:
+    def collidedWith(self, obstacle: entity.obstacle.Obstacle) -> bool:
         """
         checks the obstacle for collision with the vehicle
 
@@ -84,7 +84,7 @@ class Vehicle:
         # d_x = x_2 - x_1
         # d_y = y_2 - y_1
 
-        r = Entity.obstacle.Obstacle.radius()
+        r = entity.obstacle.Obstacle.radius()
 
         # front vector
         d_x = (self.topRight[0] - obstacle.relX) - (self.topLeft[0] - obstacle.relX)
