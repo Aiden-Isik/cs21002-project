@@ -19,10 +19,8 @@ class SingleSimulation:
     CarSpeed = 10
 
     # Movement information
-    # These are set by the agent (or player) controlling the car in a separate thread
     @dataclass
     class Movement:
-        mutex = threading.Lock()
         left: float = 0.0
         right: float = 0.0
         forwards: float = 0.0
@@ -91,22 +89,3 @@ class SingleSimulation:
             sensor.updateDetect(self.obstacleList)
 
         self.fitness += (cos(self.car.direction) * self.car.speed)
-
-    def run(self, maxTicks: int = 5_000_000):
-        """
-        Run an entire simulation either until the car crashes or until it hits a tick limit
-        """
-
-        self.tick(0.0, 0.0)
-
-        for i in range(maxTicks):
-            self.movement.mutex.acquire()
-
-            # If the car is currently moving, tick the simulation
-            if(self.movement.left or self.movement.right or self.movement.forwards):
-               self.tick(self.movement.right - self.movement.left, self.movement.forwards)
-
-            self.movement.mutex.release()
-
-            if self.crashed:
-                return

@@ -30,10 +30,6 @@ def control_panel():
     # Spawn an instance of the simulation (TEMP)
     sim = simulation.SingleSimulation(10, 800, 500)
 
-    # Start the simulation (TEMP)
-    simThread = threading.Thread(target = sim.run)
-    simThread.start()
-
     # Start the simulations
     #def start_simulations():
     #    print("test")
@@ -42,7 +38,7 @@ def control_panel():
     drawBatch = pyglet.graphics.Batch()
 
     # Header
-    title = pyglet.text.Label("PLACEHOLDER-NAME",
+    title = pyglet.text.Label("Car Navigation",
                               font_name=mainFont,
                               font_size=h1Size,
                               color=foregroundColour,
