@@ -1,6 +1,5 @@
 import copy
-import singleSimulation
-
+import simulation
 
 class SearchAgent:
     """
@@ -25,7 +24,7 @@ class SearchAgent:
             (1.0, 1.0),    
         ]
 
-    def choose_action(self, sim: "singleSimulation.SingleSimulation"):
+    def choose_action(self, sim):
         best_action = (0.0, 1.0)
         best_score = -float("inf")
 
@@ -45,7 +44,7 @@ class SearchAgent:
 
         return best_action
 
-    def score(self, sim: "singleSimulation.SingleSimulation") -> float:
+    def score(self, sim) -> float:
        
         if sim.crashed:
             return -self.crash_penalty
