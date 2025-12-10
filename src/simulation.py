@@ -1,7 +1,6 @@
 from entity.obstacle import Obstacle
 from entity.vehicle import Vehicle
 
-import threading
 from dataclasses import dataclass
 from math import pi, cos
 
@@ -18,26 +17,25 @@ class SingleSimulation:
     # px per tick
     CarSpeed = 10
 
-    # Movement information
-    @dataclass
-    class Movement:
-        left: float = 0.0
-        right: float = 0.0
-        forwards: float = 0.0
-
 
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
-        self.car = Vehicle()
-        self.sandboxSize = sandboxSize
-        self.fitness = 0.0
+        # Make sure obstacles are not spawned outside a valid range
+        if sandboxSize < minDistance:
+            raise ValueError("Invalid sandboxSize/minDistance combination, minDistance must be less than sandboxSize")
 
+        # Sandbox initialisation
+        self.sandboxSize = sandboxSize
+        self.obstacleRespawnCount = 0
+
+        # Vehicle initialisation
+        self.car = Vehicle()
+        self.fitness = 0.0
         self.crashed = False
 
+        # Obstacle initialisation
         self.obstacleList: list[Obstacle] = []
         for _ in range(numberOfObstacles):
             self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
-
-        self.movement = self.Movement()
 
     def tick(self, turning: float = 0.0, forward: float = 0.0) -> None:
         """
@@ -73,7 +71,13 @@ class SingleSimulation:
         for obstacle in self.obstacleList:
             # if the object has fallen outside of the bounds specified, or if it has x position infinity, signalling that it needs a respawn
             if (abs(obstacle.relX) > self.sandboxSize) or (abs(obstacle.relY) > self.sandboxSize) or (obstacle.relX == float("Infinity")):
+                # Create a new obstacle every 20 respawns, this has the effect of gradually increasing the difficulty
+                if(self.obstacleRespawnCount % 20 == 0 and self.obstacleRespawnCount != 0):
+                    print("New obstacle at respawn count " + str(self.obstacleRespawnCount))
+                    self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
+
                 obstacle.respawn(self.car.direction)
+                self.obstacleRespawnCount += 1
 
             # once the obstacle has been respawned (if necessary), move it in the given direction
             obstacle.move(self.car.speed, self.car.direction)

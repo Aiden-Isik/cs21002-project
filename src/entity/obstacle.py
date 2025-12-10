@@ -16,7 +16,7 @@ class Obstacle:
         """
         position of the object is relative to the vehicle
 
-        ifi relative_X is Infinity then this signals to the obstacle that it must respawn itself
+        if relative_X is Infinity then this signals to the obstacle that it must respawn itself
         """
         self.relX = relative_X
         self.relY = relative_Y
@@ -59,9 +59,11 @@ class Obstacle:
         elif (vehicleDirection > pi / 4) and  vehicleDirection < ((5 / 4) * pi):
             self.relY = random.randint(round(self.minSpawnDistance), round(self.sandboxSize))
             self.relX = random.randint(-round(self.sandboxSize), round(self.sandboxSize))
+
         elif (vehicleDirection > pi / 4) and  vehicleDirection < ((7 / 4) * pi):
             self.relX = -random.randint(round(self.minSpawnDistance), round(self.sandboxSize))
             self.relY = random.randint(-round(self.sandboxSize), round(self.sandboxSize))
+
         else:
             self.relY = -random.randint(round(self.minSpawnDistance), round(self.sandboxSize))
             self.relX = random.randint(-round(self.sandboxSize), round(self.sandboxSize))
