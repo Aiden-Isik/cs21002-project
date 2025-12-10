@@ -76,5 +76,3 @@ class DotSensor:
         actualDistance = sqrt(nearestDistanceSquaredSoFar) # this is the distance from the centre, which is what we really care about for detect
 
         self.detect = min(1.0, max(0.0, (1.0 - (actualDistance / self.length))))
-
-        print(f"collided {self.detect} {nearestDistanceSquaredSoFar} {self.farCorner[0]} {self.farCorner[1]}")
