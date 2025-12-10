@@ -1,0 +1,6 @@
+[1] - https://velocetoday.com/self-drive-cars-and-you-a-history-longer-than-you-think/  -  "Self-Drive Cars and You: A History Longer than You Think"
+[2] - https://www.researchgate.net/publication/338412717_How_Autonomous_Vehicles_Will_Profoundly_Change_The_World/download?_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6Il9kaXJlY3QiLCJwYWdlIjoiX2RpcmVjdCJ9fQ  -  "How Autonomous
+Vehicles Will Profoundly Change The World" - Paul Russell
+[3] - https://www.theverge.com/2016/11/27/13752344/alvinn-self-driving-car-1989-cmu-navlab  - "Meet ALVINN, the self-driving car from 1989" - Andrew J. Hawkins 
+[4] - https://waymo.com/blog/2019/01/automl-automating-design-of-machine  -  "AutoML: Automating the design of machine learning models for autonomous driving" - Shuyang Cheng & Gabriel Bender
+[5] - https://web.archive.org/web/20230223215235/https://roborace.com/  -  "RoboRace home page" - RoboRace

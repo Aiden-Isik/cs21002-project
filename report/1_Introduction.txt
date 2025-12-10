@@ -1,0 +1,1 @@
+Our AI project is a method of avoiding obstacles on a 2D plane, whilst moving as far as possible in a given direction, using machine learning. This is directly compared with a traditional algorithm that "looks forwards in time" to decide where to go in order to avoid obstacles.
