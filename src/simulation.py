@@ -1,8 +1,9 @@
 from entity.obstacle import Obstacle
 from entity.vehicle import Vehicle
+from entity.dotSensor import DotSensor
 
 from dataclasses import dataclass
-from math import pi, cos
+from math import pi, cos, radians
 
 class SingleSimulation:
     """
@@ -36,6 +37,43 @@ class SingleSimulation:
         self.obstacleList: list[Obstacle] = []
         for _ in range(numberOfObstacles):
             self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
+
+    def copy(self):
+        returnInstance                      = SingleSimulation()
+        returnInstance.sandboxSize          = self.sandboxSize
+        returnInstance.obstacleRespawnCount = self.obstacleRespawnCount
+
+
+        # copy over the car ==================================================================
+        returnInstance.car             = Vehicle()
+        returnInstance.car.direction   = self.car.direction
+        returnInstance.car.speed       = self.car.speed
+        returnInstance.car.maxSpeed    = self.car.maxSpeed
+
+        returnInstance.car.topLeft     = self.car.topLeft
+        returnInstance.car.topRight    = self.car.topRight
+        returnInstance.car.bottomLeft  = self.car.bottomLeft
+        returnInstance.car.bottomRight = self.car.bottomRight
+
+        returnInstance.car.topLeftDatum     = self.car.topLeftDatum
+        returnInstance.car.topRightDatum    = self.car.topRightDatum
+        returnInstance.car.bottomLeftDatum  = self.car.bottomLeftDatum
+        returnInstance.car.bottomRightDatum = self.car.bottomRightDatum
+
+        returnInstance.car.screenSpaceTopLeft     = self.car.screenSpaceTopLeft
+        returnInstance.car.screenSpaceTopRight    = self.car.screenSpaceTopRight
+        returnInstance.car.screenSpaceBottomLeft  = self.car.screenSpaceBottomLeft
+        returnInstance.car.screenSpaceBottomRight = self.car.screenSpaceBottomRight
+        returnInstance.car.screenSpaceCentre      = self.car.screenSpaceCentre
+
+        for angle in self.car.dotSensorAngleList:
+            returnInstance.car.dotSensorAngleList.append(angle)
+            returnInstance.car.dotSensorList.append(DotSensor())
+            returnInstance.car.dotSensorList[-1].setOffset(radians(angle))
+
+        returnInstance.car.rotatePoints()
+
+        # finished copying over the car ======================================================
 
     def tick(self, turning: float = 0.0, forward: float = 0.0) -> None:
         """
