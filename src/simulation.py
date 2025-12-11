@@ -39,7 +39,7 @@ class SingleSimulation:
             self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
 
     def copy(self):
-        returnInstance                      = SingleSimulation()
+        returnInstance                      = SingleSimulation(0)
         returnInstance.sandboxSize          = self.sandboxSize
         returnInstance.obstacleRespawnCount = self.obstacleRespawnCount
 
@@ -67,13 +67,20 @@ class SingleSimulation:
         returnInstance.car.screenSpaceCentre      = self.car.screenSpaceCentre
 
         for angle in self.car.dotSensorAngleList:
-            returnInstance.car.dotSensorAngleList.append(angle)
             returnInstance.car.dotSensorList.append(DotSensor())
             returnInstance.car.dotSensorList[-1].setOffset(radians(angle))
 
         returnInstance.car.rotatePoints()
 
+        for obstacle in self.obstacleList:
+            returnInstance.obstacleList.append(Obstacle(obstacle.relX, obstacle.relY, obstacle.sandboxSize, obstacle.minSpawnDistance))
+            returnInstance.obstacleList[-1].screenSpaceX     = obstacle.screenSpaceX
+            returnInstance.obstacleList[-1].screenSpaceY     = obstacle.screenSpaceY
+            returnInstance.obstacleList[-1].collidingWithCar = obstacle.collidingWithCar
+
         # finished copying over the car ======================================================
+
+        return returnInstance
 
     def tick(self, turning: float = 0.0, forward: float = 0.0) -> None:
         """
@@ -111,7 +118,6 @@ class SingleSimulation:
             if (abs(obstacle.relX) > self.sandboxSize) or (abs(obstacle.relY) > self.sandboxSize) or (obstacle.relX == float("Infinity")):
                 # Create a new obstacle every 20 respawns, this has the effect of gradually increasing the difficulty
                 if(self.obstacleRespawnCount % 20 == 0 and self.obstacleRespawnCount != 0):
-                    print("New obstacle at respawn count " + str(self.obstacleRespawnCount))
                     self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
 
                 obstacle.respawn(self.car.direction)
