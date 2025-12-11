@@ -1,10 +1,12 @@
 import os
 import common
 import pyglet
+import gymnasium
+from gymnasium.utils.env_checker import check_env
 import threading
 import simulation
 import renderer
-import time
+import gymadapter
 
 def main():
     """
@@ -16,24 +18,18 @@ def main():
     pyglet.resource.reindex()
     print(pyglet.resource.path[0])
 
-    # Spawn an instance of the simulation
-    sim = simulation.SingleSimulation(10, 800, 500)
-    renderer_running = False
-    window = pyglet.window.Window(800, 800, "Car Navigation - Renderer")
+    # Set up the machine learning environment
+    gymnasium.register(id="gymnasium_env/SimulationGymnasiumAdapter-v0",
+                       entry_point=gymadapter.SimulationGymnasiumAdapter)
 
-    # If the renderer isn't already running, start it
-    while(not window.has_exit):
-        if(renderer_running != True):
-            renderer.render(sim, window)
-            renderer_running = True
+    ml_env = gymnasium.make("gymnasium_env/SimulationGymnasiumAdapter-v0")
 
-        # Render a frame
-        sim.tick(0.0, 1.0)
-        pyglet.clock.tick()
-        window.switch_to()
-        window.dispatch_events()
-        window.dispatch_event("on_draw")
-        window.flip()
+    # Test the machine learning environment
+    try:
+        gymnasium.utils.env_checker.check_env(ml_env.unwrapped)
+        print("ML checks passed!")
+    except Exception as err:
+        print(f"ML checks failed: {err}!")
 
 
 if __name__ == "__main__":

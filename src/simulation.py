@@ -151,4 +151,5 @@ class SingleSimulation:
         for sensor in self.car.dotSensorList:
             sensor.updateDetect(self.obstacleList)
 
+        # Increase the fitness (up direction)
         self.fitness += (cos(self.car.direction) * self.car.speed)
