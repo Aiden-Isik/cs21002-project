@@ -18,6 +18,14 @@ class SingleSimulation:
     # px per tick
     CarSpeed = 10
 
+    # how fast the floor is lava fail condition rises
+    # px per tick
+    FloorIsLavaSpeed = 1
+
+    # where the floor is lava fail condition starts, to give a little bit of buffer
+    # px
+    FloorIsLavaStart = -100
+
 
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
         # Make sure obstacles are not spawned outside a valid range
@@ -32,6 +40,7 @@ class SingleSimulation:
         self.car = Vehicle()
         self.fitness = 0.0
         self.crashed = False
+        self.floorIsLavaHeight = SingleSimulation.FloorIsLavaStart
 
         # Obstacle initialisation
         self.obstacleList: list[Obstacle] = []
@@ -131,6 +140,12 @@ class SingleSimulation:
                 # if it has then this simulation is done
                 self.crashed = True
                 obstacle.collidingWithCar = True
+
+        # if the car isnt going in the correct direction quickly enough, fail it
+        # this most likely means it got stuck doing donuts instead of progressing, which would otherwise lead to an infinite session
+        self.floorIsLavaHeight += SingleSimulation.FloorIsLavaSpeed
+        if self.fitness < self.floorIsLavaHeight:
+            self.crashed = True
 
         # go through every dot sensor and check to see if there are any being detected
         for sensor in self.car.dotSensorList:
