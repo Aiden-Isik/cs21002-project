@@ -1,59 +1,52 @@
-import copy
 import simulation
+
+# manual searching
+# makes three copies of the vehicle, one for left, one for right, and another for forwards
+# then moves the copy forwards by lookaheadLength steps, whilst also going the direction specified, and checks to see if it has crashed
+# each copy is scored based off of whether or not it has crashed, and how many obstacles it can detect
+# this is added to the forwards progress to get the total fitness of the copy
+# the copy with the highest fitness is then chosen as the one to go forwards with
 
 class SearchAgent:
     """
-    Lookahead search-based driver.
-
-    Each frame:
-      - Tries 3 actions: LEFT, STRAIGHT, RIGHT (always forward).
+    looks ahead nSteps steps to check for the best method forwards
     """
 
-    def __init__(self, lookahead_steps: int = 8, sensor_weight: float = 5.0, crash_penalty: float = 1e9):
-        self.lookahead_steps = lookahead_steps
-        self.sensor_weight = sensor_weight
-        self.crash_penalty = crash_penalty
+    def __init__(self, nSteps = 8, sensorWeight = 5.0, crashPenalty = -1e9):
+        self.nSteps = nSteps
+        self.sensorWeight = sensorWeight
+        self.crashPenalty = crashPenalty
 
-        # (turning, forward)
-        # In SingleSimulation.tick:
-        #   turning < -0.5 -> turn RIGHT (direction -= TurnAmount)
-        #   turning > 0.5  -> turn LEFT  (direction += TurnAmount)
-        self.actions = [
-            (-1.0, 1.0),  
-            (0.0, 1.0),   
-            (1.0, 1.0),    
+        # posasible directions to turn
+        self.potentialActions = [
+            -1.0, # turning left
+            0.0,  # no turning
+            1.0   # turning right
         ]
 
-    def choose_action(self, sim):
-        best_action = (0.0, 1.0)
-        best_score = -float("inf")
+    # choose which direction to turn: left, right, or no turning
+    def chooseDirection(self, simInstance: simulation.SingleSimulation):
+        bestChoice      = self.potentialActions[1] # best choice we have found to turn so far
+        highScore       = float("-Infinity")       # the score of that choice
 
-        for turning, forward in self.actions:
-            # simulate on a copy
-            test_sim = copy.deepcopy(sim)
+        # check every direction
+        for i in self.potentialActions:
+            currentScore = 0.0
 
-            for _ in range(self.lookahead_steps):
-                test_sim.tick(turning, forward)
-                if test_sim.crashed:
-                    break
+            # make a new instance
+            checkingInstance = simInstance.copy()
 
-            score = self.score(test_sim)
-            if score > best_score:
-                best_score = score
-                best_action = (turning, forward)
+            # step forwards
+            for j in range(self.nSteps):
+                checkingInstance.tick(i, 1.0)
 
-        return best_action
+            # update the current score
+            currentScore = checkingInstance.fitness
+            if checkingInstance.crashed:
+                currentScore += self.crashPenalty
 
-    def score(self, sim) -> float:
-       
-        if sim.crashed:
-            return -self.crash_penalty
+            if currentScore > highScore:
+                bestChoice = i
+                highScore = currentScore
 
-       
-        clear_count = 0.0
-        for sensor in sim.car.dotSensorList:
-            if sensor.detect == 0.0:
-                clear_count += 1.0
-
-        # combine forward progress + clear space
-        return sim.fitness + clear_count * self.sensor_weight
+        return bestChoice
