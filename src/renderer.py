@@ -1,23 +1,15 @@
 import pyglet
 import time
 
-def render(sim):
+def render(sim, window):
     """
-    Render the given simulation 'sim'
+    Render the given simulation 'sim' into window 'window'
     """
 
     # Define font used
     pyglet.resource.add_font("assets/ComicShannsMono-Regular.ttf")
     mainFont = "Comic Shanns Mono"
     mainFontSize = 24
-
-    # Set up the default movement information
-    moveLeft = 0.0
-    moveRight = 0.0
-    moveForwards = 0.0
-
-    # Start up the window
-    window = pyglet.window.Window(800, 800, "Car Navigation - Renderer")
 
     # Flip the Y coordinate so things render the right way round.
     # This isn't strictly necessary, and 0 being the bottom left is in my opinion superior,
@@ -29,8 +21,6 @@ def render(sim):
     # On each frame, draw the scene
     @window.event
     def on_draw():
-        sim.tick(moveRight - moveLeft, moveForwards) # TODO: decouple from simulation
-
         # Even though this array is not read, all objects to be drawn must be added or they won't render.
         # Presumably, that is the garbage collector's doing.
         objects = []
@@ -66,36 +56,6 @@ def render(sim):
         window.clear()
         drawBatch.draw()
 
-    # Handle keypresses
-    # TODO: Decouple input from the renderer
     @window.event
-    def on_key_press(symbol, modifiers):
-        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
-        nonlocal moveLeft
-        nonlocal moveRight
-        nonlocal moveForwards
-
-        if(symbol == pyglet.window.key.A):
-            moveLeft = 1.0
-
-        elif(symbol == pyglet.window.key.D):
-            moveRight = 1.0
-
-        elif(symbol == pyglet.window.key.W):
-            moveForwards = 1.0
-
-    @window.event
-    def on_key_release(symbol, modifiers):
-        # Instruct the interpreter to assign to the parent scope's variables instead of new ones
-        nonlocal moveLeft
-        nonlocal moveRight
-        nonlocal moveForwards
-
-        if(symbol == pyglet.window.key.A):
-            moveLeft = 0.0
-
-        elif(symbol == pyglet.window.key.D):
-            moveRight = 0.0
-
-        elif(symbol == pyglet.window.key.W):
-            moveForwards = 0.0
+    def on_close():
+        window.close()
