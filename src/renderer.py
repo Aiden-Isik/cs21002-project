@@ -1,6 +1,5 @@
 import pyglet
 import time
-import collisionavoidance
 
 def render(sim):
     """
@@ -30,8 +29,7 @@ def render(sim):
     # On each frame, draw the scene
     @window.event
     def on_draw():
-        agent = collisionavoidance.SearchAgent()
-        sim.tick(agent.chooseDirection(sim), 1.0) # TODO: decouple from simulation
+        sim.tick(moveRight - moveLeft, moveForwards) # TODO: decouple from simulation
 
         # Even though this array is not read, all objects to be drawn must be added or they won't render.
         # Presumably, that is the garbage collector's doing.
