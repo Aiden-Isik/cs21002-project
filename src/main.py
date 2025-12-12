@@ -1,9 +1,15 @@
 import os
-import common
+import sys
+
 import pyglet
 import gymnasium
 from gymnasium.utils.env_checker import check_env
-import threading
+
+# Add stable-baselines3 from lib subdir
+sys.path.append(os.path.dirname(__file__) + "/../lib/stable_baselines3")
+import stable_baselines3
+
+import common
 import simulation
 import renderer
 import gymadapter
@@ -24,12 +30,14 @@ def main():
 
     ml_env = gymnasium.make("gymnasium_env/SimulationGymnasiumAdapter-v0")
 
-    # Test the machine learning environment
-    try:
-        gymnasium.utils.env_checker.check_env(ml_env.unwrapped)
-        print("ML checks passed!")
-    except Exception as err:
-        print(f"ML checks failed: {err}!")
+    # Set up the agent
+    ml_model = stable_baselines3.A2C("", ml_env, verbose=1)
+
+    # Train the agent
+    ml_model.learn(progress_bar=True)
+
+    # Save the agent
+    ml_model.save("a2c_collision_avoidance")
 
 
 if __name__ == "__main__":

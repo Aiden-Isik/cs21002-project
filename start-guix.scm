@@ -19,7 +19,7 @@
  ;; Pass through rendering-related directories to the shell
  "--share=/tmp/.X11-unix/"
  (string-append "--expose=/run/user/" (number->string (getuid)))
- ;; Install python, pyglet, gymnasium, numpy, and bash to the shell
- "python" "python-pyglet" "python-gymnasium" "python-numpy" "bash-minimal"
+ ;; Install python, pyglet, pytorch, gymnasium, numpy, and bash to the shell
+ "python" "python-pyglet", "python-pytorch", "python-gymnasium" "python-numpy" "bash-minimal"
  ;; Run the python interpreter after passing environment variables
  "--" "sh" "-c" (string-append env-vars "python3 \"" (dirname (current-filename)) "/src/main.py\""))

@@ -28,7 +28,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         observation_list = []
 
         for sensor in self.sim.car.dotSensorList:
-            observation_list.append(int(sensor.length))
+            observation_list.append(int(sensor.length) + 1)
 
         self.observation_space = gymnasium.spaces.MultiDiscrete(observation_list)
 
@@ -79,7 +79,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         observation_list = []
 
         for sensor in self.sim.car.dotSensorList:
-            observation_list.append(1 + int(sensor.detect))
+            observation_list.append(int(sensor.detect))
 
         # Render a frame if required
         if self.render_mode == "pyglet_renderer":
