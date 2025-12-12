@@ -7,7 +7,9 @@
 
 ## Running
 
-TODO
+Run search agent: ```python3 ./src/run_search_agent.py```
+Train ML model: ```python3 ./src/train_model.py```
+Test trained model: ```python3 ./src/test_model.py <model_filename>```
 
 ## Licensing
 
