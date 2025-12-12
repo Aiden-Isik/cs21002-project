@@ -60,7 +60,7 @@ class SingleSimulation:
 
 
     def copy(self):
-        returnInstance                      = SingleSimulation(0)
+        returnInstance                      = SingleSimulation(len(self.obstacleList))
         returnInstance.sandboxSize          = self.sandboxSize
         returnInstance.obstacleRespawnCount = self.obstacleRespawnCount
 
@@ -92,6 +92,8 @@ class SingleSimulation:
             returnInstance.car.dotSensorList[-1].setOffset(radians(angle))
 
         returnInstance.car.rotatePoints()
+
+        returnInstance.obstacleList = []
 
         for obstacle in self.obstacleList:
             returnInstance.obstacleList.append(Obstacle(obstacle.relX, obstacle.relY, obstacle.sandboxSize, obstacle.minSpawnDistance))
