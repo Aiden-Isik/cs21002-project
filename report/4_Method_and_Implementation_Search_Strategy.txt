@@ -1,10 +1,6 @@
 The search strategy utilised was a fairly basic lookahead function. It simply made a copy of the simulation to work with, then stepped the copy forwards by a given number of steps to see if it crashed. A copy was made for each input the AI was allowed to make, that being turning left, turning right, or not turning at all. Each copy was always moving forwards. The step size was initially eight, for the purposes of implementation and initial runs to collect data, then it was tried with sixteen, thirty two, and sixty four steps.
-The initial tests with eight steps of lookahead showed good performance, being able to dodge most obstacles that were on their own, but got worse as the obstacles got more closely packed together. The higher lookahead step runs showed better performance at dodging clusters of obstacles but only to a point, with 
-
-BEST LOOKAHEAD STEP NUMBER HERE
-
-steps being the best performing, and a dropoff in performance after this.
+The initial tests with eight steps of lookahead showed good performance, being able to dodge most obstacles that were on their own, but got worse as the obstacles got more closely packed together. The higher lookahead step runs showed better performance at dodging clusters of obstacles but only to a point, with 16 steps being the best performing, and a dropoff in performance after this.
 
 INSERT GRAPH OF LOOKAHEAD STEPS VS AVERAGE FITNESS
 
-The higher step runs had a tendency to start doing circles and not progressing when the obstacles reached a certain density. This is likely due to the lookahead not being able to vary input in one test, and one lookahead test doing very close to a half turn, leading the algorithm to not choose any direction except to go back and forth in a circle. The observation of this behaviour is what prompted the "floor is lava" feature to be added, so that any run that ended up going in circles would still eventually end.
+The higher step runs had a tendency to start doing circles and not progressing when the obstacles reached a certain density. This is likely due to the lookahead not being able to vary input in one test, and one lookahead test doing very close to a half turn with how many steps it has to complete, leading the algorithm to not choose any direction except to go back and forth in a circle. The observation of this behaviour is what prompted the "floor is lava" feature to be added, so that any run that ended up going in circles would still eventually end.
