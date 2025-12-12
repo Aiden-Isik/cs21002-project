@@ -110,6 +110,9 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         self.window.dispatch_event("on_draw")
         self.window.flip()
 
+        if self.sim.crashed:
+            print("Fitness: " + str(self.sim.fitness))
+
 
     # End the simulation
     def close(self):
