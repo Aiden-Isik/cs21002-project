@@ -1,6 +1,6 @@
 from entity.obstacle import Obstacle
 from entity.vehicle import Vehicle
-from entity.dotSensor import DotSensor
+from entity.dotsensor import DotSensor
 
 from dataclasses import dataclass
 from math import pi, cos, radians

@@ -1,5 +1,5 @@
 import entity.obstacle
-import entity.dotSensor
+import entity.dotsensor
 
 from math import cos, sin, sqrt, radians
 
