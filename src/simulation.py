@@ -28,6 +28,13 @@ class SingleSimulation:
 
 
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
+        if "instanceCount" not in SingleSimulation.__dict__:
+            SingleSimulation.instanceCount = 0
+        else:
+            SingleSimulation.instanceCount += 1
+
+        self.instanceNo = SingleSimulation.instanceCount
+
         # Make sure obstacles are not spawned outside a valid range
         if sandboxSize < minDistance:
             raise ValueError("Invalid sandboxSize/minDistance combination, minDistance must be less than sandboxSize")
@@ -46,6 +53,11 @@ class SingleSimulation:
         self.obstacleList: list[Obstacle] = []
         for _ in range(numberOfObstacles):
             self.obstacleList.append(Obstacle(float("Infinity"), 0.0, self.sandboxSize))
+
+
+        # Tick over once
+        self.tick(0.0, 0.0)
+
 
     def copy(self):
         returnInstance                      = SingleSimulation(0)
@@ -151,4 +163,5 @@ class SingleSimulation:
         for sensor in self.car.dotSensorList:
             sensor.updateDetect(self.obstacleList)
 
+        # Increase the fitness (up direction)
         self.fitness += (cos(self.car.direction) * self.car.speed)

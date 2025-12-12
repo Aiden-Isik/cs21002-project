@@ -1,10 +1,18 @@
 import os
-import common
+import sys
+
 import pyglet
-import threading
+import gymnasium
+from gymnasium.utils.env_checker import check_env
+
+# Add stable-baselines3 from lib subdir
+sys.path.append(os.path.dirname(__file__) + "/../lib/stable_baselines3")
+import stable_baselines3
+
+import common
 import simulation
 import renderer
-import time
+import gymadapter
 
 def main():
     """
@@ -16,25 +24,33 @@ def main():
     pyglet.resource.reindex()
     print(pyglet.resource.path[0])
 
-    # Spawn an instance of the simulation
-    sim = simulation.SingleSimulation(10, 800, 500)
-    renderer_running = False
-    window = pyglet.window.Window(800, 800, "Car Navigation - Renderer")
+    # Set up the machine learning environment
+    gymnasium.register(id="gymnasium_env/SimulationGymnasiumAdapter-v0",
+                       entry_point=gymadapter.SimulationGymnasiumAdapter)
 
-    # If the renderer isn't already running, start it
-    while(not window.has_exit):
-        if(renderer_running != True):
-            renderer.render(sim, window)
-            renderer_running = True
+    #ml_env = gymnasium.make("gymnasium_env/SimulationGymnasiumAdapter-v0", render_mode="pyglet_renderer")
 
-        # Render a frame
-        sim.tick(0.0, 1.0)
-        pyglet.clock.tick()
-        window.switch_to()
-        window.dispatch_events()
-        window.dispatch_event("on_draw")
-        window.flip()
+    ml_vec_env = stable_baselines3.common.env_util.make_vec_env(gymadapter.SimulationGymnasiumAdapter)
 
+    # Set up the agent
+    #ml_model = stable_baselines3.A2C("MlpPolicy", ml_env, verbose=1, learning_rate=0.01)
+
+    # Train the agent
+    #ml_model.learn(progress_bar=True, total_timesteps=100000)
+
+    # Save the agent
+    #ml_model.save("a2c_collision_avoidance")
+
+    # Load the agent
+    ml_model = stable_baselines3.A2C.load("./a2c_collision_avoidance-rate-0.0007-time-100000.zip", env=ml_vec_env)
+
+    # Test the agent
+    obs = ml_vec_env.reset()
+
+    for _ in range(10000):
+        action, states = ml_model.predict(obs)
+        obs, rewards, _, info = ml_vec_env.step(action)
+        ml_vec_env.render()
 
 if __name__ == "__main__":
     main()

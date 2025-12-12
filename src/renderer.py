@@ -40,6 +40,7 @@ def render(sim, window):
         objects.append(pyglet.text.Label(str(sim.car.direction), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(10), anchor_x="left", anchor_y="top", batch=drawBatch))
         objects.append(pyglet.text.Label(str(sim.obstacleList[0].relX), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(40), anchor_x="left", anchor_y="top", batch=drawBatch))
         objects.append(pyglet.text.Label(str(sim.obstacleList[0].relY), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(70), anchor_x="left", anchor_y="top", batch=drawBatch))
+        objects.append(pyglet.text.Label(str(sim.instanceNo), font_name=mainFont, font_size=mainFontSize, color=(255, 255, 255), x=10, y=flip_y_coord(100), anchor_x="left", anchor_y="top", batch=drawBatch))
 
         # Obstacles
         for obstacle in sim.obstacleList:
