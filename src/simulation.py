@@ -28,16 +28,17 @@ class SingleSimulation:
 
 
     def __init__(self, numberOfObstacles, sandboxSize: float = 2000.0, minDistance: float = 500.0):
+        # Make sure obstacles are not spawned outside a valid range
+        if sandboxSize < minDistance:
+            raise ValueError("Invalid sandboxSize/minDistance combination, minDistance must be less than sandboxSize")
+
+        # Instance counter
         if "instanceCount" not in SingleSimulation.__dict__:
             SingleSimulation.instanceCount = 0
         else:
             SingleSimulation.instanceCount += 1
 
         self.instanceNo = SingleSimulation.instanceCount
-
-        # Make sure obstacles are not spawned outside a valid range
-        if sandboxSize < minDistance:
-            raise ValueError("Invalid sandboxSize/minDistance combination, minDistance must be less than sandboxSize")
 
         # Sandbox initialisation
         self.sandboxSize = sandboxSize

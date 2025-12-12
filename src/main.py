@@ -1,5 +1,6 @@
 import os
 import sys
+import argparse
 
 import pyglet
 import gymnasium
