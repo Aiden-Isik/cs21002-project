@@ -51,8 +51,6 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         for sensor in self.sim.car.dotSensorList:
             observation_list.append(int(sensor.detect))
 
-        print(self.sim.instanceNo)
-
         return (numpy.array(observation_list), {})
 
 
