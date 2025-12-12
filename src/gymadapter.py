@@ -14,7 +14,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
 
     metadata = {"render_modes": ["pyglet_renderer"], "render_fps": 60}
 
-    def __init__(self, render_mode=None, sandbox_size=800, min_spawn_dist=500, obstacle_count=10):
+    def __init__(self, render_mode="pyglet_renderer", sandbox_size=800, min_spawn_dist=500, obstacle_count=10):
         # Create the simulator object
         self.obstacle_count = obstacle_count
         self.min_spawn_dist = min_spawn_dist
