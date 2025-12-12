@@ -50,19 +50,21 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         for sensor in self.sim.car.dotSensorList:
             observation_list.append(int(sensor.detect))
 
+        print(self.sim.instanceNo)
+
         return (numpy.array(observation_list), {})
 
 
     # Run one tick of the simulation
     def step(self, action):
         # Tick over the simulation based on the action chosen
-        if action == self.Actions.FORWARDS:
+        if action == 0:
             self.sim.tick(0.0, 1.0)
 
-        elif action == self.Actions.LEFT:
+        elif action == 1:
             self.sim.tick(-1.0, 1.0)
 
-        elif action == self.Actions.RIGHT:
+        elif action == 2:
             self.sim.tick(1.0, 1.0)
 
         # Return the results of the tick
@@ -82,6 +84,12 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         # Render a frame if required
         if self.render_mode == "pyglet_renderer":
             self.render()
+
+        if self.sim.crashed:
+            if self.window != None:
+                self.window.close()
+
+            self.window = None
 
         # No truncation ever
         # (the simulation will always eventually finish as obstacle density keeps rising)
@@ -107,4 +115,4 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
     # End the simulation
     def close(self):
         if(self.window != None):
-            self.window.close()
+            self.window = None
