@@ -1,4 +1,5 @@
 import enum
+from math import pi
 import gymnasium
 import numpy
 import pyglet
@@ -24,7 +25,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         self.action_space = gymnasium.spaces.Discrete(3) # 3 actions: forwards, left, right
 
         # Create the observation space
-        observation_list = []
+        observation_list = [int((2 * pi * 1000) + 1)]
 
         for sensor in self.sim.car.dotSensorList:
             observation_list.append(int(sensor.length) + 1)
@@ -45,7 +46,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         self.sim = simulation.SingleSimulation(self.obstacle_count, self.sandbox_size, self.min_spawn_dist)
 
         # Observe the detection of each sensor
-        observation_list = []
+        observation_list = [int(self.sim.car.direction * 1000)]
 
         for sensor in self.sim.car.dotSensorList:
             observation_list.append(int(sensor.detect))
@@ -76,7 +77,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         reward = self.sim.fitness
 
         # Observe the detection of each sensor
-        observation_list = []
+        observation_list = [int(self.sim.car.direction * 1000)]
 
         for sensor in self.sim.car.dotSensorList:
             observation_list.append(int(sensor.detect))
