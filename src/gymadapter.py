@@ -11,8 +11,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
         LEFT = 1
         RIGHT = 2
 
-    metadata = {"render_modes": ["pylget_renderer"], "render_fps": 60}
-
+    metadata = {"render_modes": ["pyglet_renderer"], "render_fps": 60}
 
     def __init__(self, render_mode=None, sandbox_size=800, min_spawn_dist=500, obstacle_count=10):
         # Create the simulator object
@@ -44,7 +43,6 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
 
         # Create a new simulation
         self.sim = simulation.SingleSimulation(self.obstacle_count, self.sandbox_size, self.min_spawn_dist)
-        self.sim.tick(0.0, 0.0)
 
         # Observe the detection of each sensor
         observation_list = []
@@ -83,7 +81,7 @@ class SimulationGymnasiumAdapter(gymnasium.Env):
 
         # Render a frame if required
         if self.render_mode == "pyglet_renderer":
-            self._render_frame()
+            self.render()
 
         # No truncation ever
         # (the simulation will always eventually finish as obstacle density keeps rising)

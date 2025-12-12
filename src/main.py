@@ -28,13 +28,13 @@ def main():
     gymnasium.register(id="gymnasium_env/SimulationGymnasiumAdapter-v0",
                        entry_point=gymadapter.SimulationGymnasiumAdapter)
 
-    ml_env = gymnasium.make("gymnasium_env/SimulationGymnasiumAdapter-v0")
+    ml_env = gymnasium.make("gymnasium_env/SimulationGymnasiumAdapter-v0", render_mode="pyglet_renderer")
 
     # Set up the agent
-    ml_model = stable_baselines3.A2C("", ml_env, verbose=1)
+    ml_model = stable_baselines3.A2C("MlpPolicy", ml_env, verbose=1)
 
     # Train the agent
-    ml_model.learn(progress_bar=True)
+    ml_model.learn(progress_bar=True, total_timesteps=100000)
 
     # Save the agent
     ml_model.save("a2c_collision_avoidance")

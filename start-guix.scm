@@ -19,7 +19,8 @@
  ;; Pass through rendering-related directories to the shell
  "--share=/tmp/.X11-unix/"
  (string-append "--expose=/run/user/" (number->string (getuid)))
- ;; Install python, pyglet, pytorch, gymnasium, numpy, and bash to the shell
- "python" "python-pyglet", "python-pytorch", "python-gymnasium" "python-numpy" "bash-minimal"
+ ;; Install python, pyglet, pytorch, gymnasium, numpy, stable_baselines3 dependencies, and bash to the shell
+ "python" "python-pyglet" "python-gymnasium" "bash-minimal"
+ "python-pytorch" "python-matplotlib" "python-pandas" "python-tqdm" "python-rich" ; stable_baselines3 deps
  ;; Run the python interpreter after passing environment variables
  "--" "sh" "-c" (string-append env-vars "python3 \"" (dirname (current-filename)) "/src/main.py\""))

@@ -35,7 +35,7 @@ class Vehicle:
 
         self.dotSensorList = []
         for angle in Vehicle.dotSensorAngleList:
-            self.dotSensorList.append(entity.dotSensor.DotSensor())
+            self.dotSensorList.append(entity.dotsensor.DotSensor())
             self.dotSensorList[-1].setOffset(radians(angle))
 
     def rotatePoints(self) -> None:
