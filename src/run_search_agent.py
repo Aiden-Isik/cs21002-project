@@ -65,6 +65,9 @@ def render(sim, window):
 
         sim.tick(SearchAgent().chooseDirection(sim), 1.0)
 
+        if sim.crashed:
+            pyglet.app.exit()
+
     @window.event
     def on_close():
         window.close()
@@ -85,7 +88,7 @@ def main():
     sim.tick(0.0, 0.0)
     render(sim, pyglet.window.Window(800, 800, "Car Navigation - Renderer"))
     pyglet.app.run()
-
+    print("Fitness for search agent: " + str(sim.fitness))
 
 if __name__ == "__main__":
     main()

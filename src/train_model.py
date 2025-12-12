@@ -34,7 +34,7 @@ def main():
     ml_model = stable_baselines3.A2C("MlpPolicy", ml_env, verbose=1)
 
     # Train the agent
-    ml_model.learn(progress_bar=True, total_timesteps=1000000)
+    ml_model.learn(progress_bar=True, total_timesteps=10000)
 
     # Save the agent
     ml_model.save("a2c_collision_avoidance")
