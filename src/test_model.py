@@ -14,7 +14,17 @@ import simulation
 import renderer
 import gymadapter
 
+inputFilename = ""
+
 def main():
+    if len(sys.argv) < 2:
+        print("please have the filename as the last argument")
+        print("usage: python.exe " + sys.argv[0] + " <input filename>")
+
+        return
+
+    inputFilename = sys.argv[-1]
+
     """
     Runs the simulations and AI agents
     """
@@ -42,7 +52,7 @@ def main():
     #ml_model.save("a2c_collision_avoidance")
 
     # Load the agent
-    ml_model = stable_baselines3.A2C.load("./a2c_collision_avoidance-rate-0.0007-time-100000.zip", env=ml_vec_env)
+    ml_model = stable_baselines3.A2C.load(inputFilename, env=ml_vec_env)
 
     # Test the agent
     obs = ml_vec_env.reset()
